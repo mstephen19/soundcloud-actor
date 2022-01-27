@@ -19,10 +19,13 @@ const handleUserPage = async ({ page, request }) => {
     log.debug(`Scraped user ${username} ID of ${id}. Updating cheerioRequestList`);
 
     // Add request to our context
-    return dispatch({
-        type: 'ADD_REQUEST',
-        payload: { url: `${API_URL}/users/${id}?client_id=${state().input.clientId}`, userData: { label: 'USER', identifier: id } },
-    });
+    return dispatch(
+        {
+            type: 'ADD_REQUEST',
+            payload: { url: `${API_URL}/users/${id}?client_id=${state().input.clientId}`, userData: { label: 'USER', identifier: id } },
+        },
+        false
+    );
 };
 
 const handleUser = async ({ json, request, crawler: { requestQueue } }) => {
@@ -33,10 +36,13 @@ const handleUser = async ({ json, request, crawler: { requestQueue } }) => {
         const user = Parser.createUserObject(json);
 
         // Add user to our context
-        await dispatch({
-            type: 'ADD_USER',
-            payload: { [identifier]: { ...user, tracks: [] } },
-        });
+        await dispatch(
+            {
+                type: 'ADD_USER',
+                payload: { [identifier]: { ...user, tracks: [] } },
+            },
+            false
+        );
 
         // Add request for user's tracks
         return requestQueue.addRequest({

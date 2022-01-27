@@ -46,10 +46,13 @@ const createRequestList = async () => {
     }
 
     log.debug('Updating context with cheerioRequestList.');
-    await dispatch({
-        type: 'GENERAL',
-        payload: { cheerioRequestList },
-    });
+    await dispatch(
+        {
+            type: 'GENERAL',
+            payload: { cheerioRequestList },
+        },
+        false
+    );
 
     return Apify.openRequestList('puppeteer-urls', requests);
 };
