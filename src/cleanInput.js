@@ -10,6 +10,7 @@ const cleanInput = async ({ usernames = [], keywords = [], urls = [], maxComment
 
     for (const username of usernames) {
         if (username.match(/\s/g)) throw new Error("SoundCloud usernames can't have spaces!");
+        if (username.match(/[!$%^&*()+|~=`{}\[\]:";'<>?,.\/]/)) throw new Error('Soundcloud usernames can only have the symbols "-" and "_"');
     }
 
     for (const url of urls) {
@@ -23,6 +24,8 @@ const cleanInput = async ({ usernames = [], keywords = [], urls = [], maxComment
         if (!works || !url.includes('soundcloud.com')) throw new Error('Invalid SoundCloud URL provided!');
         if (!url.startsWith('https://')) log.warning('Please include "https://" at the beginning of the URL next time.');
     }
+
+    if (maxQueryResults < 200) maxQueryResults = 200;
 
     const [state, dispatch] = await useKVContext();
 

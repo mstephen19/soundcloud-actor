@@ -51,7 +51,7 @@
             "editor": "number",
             "default": 200,
             "maximum": 2000,
-            "minimum": 200,
+            "minimum": 0,
             "unit": "results"
         },
         "clientId": {
