@@ -1,7 +1,7 @@
 # First, specify the base Docker image. You can read more about
 # the available images at https://sdk.apify.com/docs/guides/docker-images
 # You can also use any other image from Docker Hub.
-FROM apify/actor-node:16
+FROM apify/actor-node-puppeteer-chrome:16
 
 # Second, copy just package.json and package-lock.json since it should be
 # the only file that affects "npm install" in the next step, to speed up the build
@@ -12,6 +12,7 @@ COPY package*.json ./
 # tree for debugging
 RUN npm --quiet set progress=false \
  && npm install --only=prod --no-optional \
+ && npm install cheerio \
  && echo "Installed NPM packages:" \
  && (npm list --only=prod --no-optional --all || true) \
  && echo "Node.js version:" \

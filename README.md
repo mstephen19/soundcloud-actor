@@ -13,8 +13,7 @@ SoundCloud has closed its Google Form for granting developers access to its API,
 - [Use Cases](#use-cases)
 - [Tutorial](#tutorial)
 - [Input](#input)
-- Output
-- Miscellaneous
+- [Output](#output)
  <!-- toc end -->
 
 ## Features
