@@ -49,7 +49,13 @@ const reducer = (state, action) => {
         }
         case 'DELETE_TRACK': {
             delete state.tracks[action.payload];
-            return state;
+            return {
+                ...state,
+                users: {
+                    ...state?.users,
+                    [action.identifier]: { ...state?.users[action.identifier], tracks: [...state?.users[action.identifier].tracks, action.track] },
+                },
+            };
         }
         case 'DELETE_USER': {
             delete state.users[action.identifier];

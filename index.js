@@ -26,13 +26,13 @@ Apify.main(async () => {
 
     const puppy = new Apify.PuppeteerCrawler({
         requestList: puppeteerRequestList,
-        maxConcurrency: 25,
-        handlePageTimeoutSecs: 120,
-        launchContext: {
-            launchOptions: {
-                headless: true,
-            },
-        },
+        maxConcurrency: 50,
+        handlePageTimeoutSecs: 60,
+        // launchContext: {
+        //     launchOptions: {
+        //         headless: true,
+        //     },
+        // },
         handlePageFunction: async (context) => {
             const { label } = context.request.userData;
 
@@ -63,12 +63,16 @@ Apify.main(async () => {
     const cheerioRequestList = await Apify.openRequestList('cheerio-urls', state().cheerioRequestList);
     const cheerioRequestQueue = await Apify.openRequestQueue();
 
+    const { usernames, keywords, urls } = state().input;
+    const totalEntries = usernames.length + keywords.length + urls.length;
+
     const cheerio = new Apify.CheerioCrawler({
         requestList: cheerioRequestList,
         requestQueue: cheerioRequestQueue,
-        maxConcurrency: 1,
+        maxConcurrency: totalEntries <= 1 ? 10 : 1,
         requestTimeoutSecs: 30,
         maxRequestRetries: 5,
+        useSessionPool: false,
         handlePageFunction: async (context) => {
             const { label } = context.request.userData;
             switch (label) {

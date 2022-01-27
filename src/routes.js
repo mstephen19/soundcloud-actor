@@ -65,13 +65,13 @@ const handleUserTracks = async ({ json, request, crawler: { requestQueue } }) =>
             for (const track of collection) {
                 const trackId = track.id;
 
-                const trackObj = Parser.createTrackObject(track);
+                // const trackObj = Parser.createTrackObject(track);
                 const trackNumber = collection.length;
 
                 // Add the track to our context
                 await dispatch({
                     type: 'ADD_TRACK',
-                    payload: { [trackId]: { ...trackObj, comments: [] } },
+                    payload: { [trackId]: { ...track } },
                 });
 
                 // Add a request for the track's comments
@@ -103,29 +103,26 @@ const handleTrackComments = async ({ json, request }) => {
         const comments = Parser.createCommentsObjects(collection);
 
         // Set the track's comments to our results
-        const track = state().tracks[trackId];
+        const trackObj = state().tracks[trackId];
+        const track = Parser.createTrackObject(trackObj);
         track.comments = comments;
 
         // Delete finished track from context, add it to user's context
         await dispatch({
             type: 'DELETE_TRACK',
             payload: trackId,
-        });
-
-        await dispatch({
-            type: 'ADD_TO_USER',
             identifier,
-            payload: { tracks: [...state().users[identifier].tracks, track] },
+            track,
         });
 
         if (state().users[identifier].tracks.length >= trackNumber) {
             log.info(`Scraped user with username of ${state().users[identifier].username}`);
-            await Apify.pushData({ [state().users[identifier].username]: [{ type: 'user' }, { ...state().users[identifier] }] });
+            return Apify.pushData({ [state().users[identifier].username]: [{ type: 'user' }, { ...state().users[identifier] }] });
 
-            return dispatch({
-                type: 'DELETE_USER',
-                payload: identifier,
-            });
+            // return dispatch({
+            //     type: 'DELETE_USER',
+            //     payload: identifier,
+            // });
         }
     } catch (error) {
         throw new Error(`Failed to grab track comments for track with ID ${trackId}: ${error}`);

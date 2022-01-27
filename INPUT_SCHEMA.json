@@ -68,5 +68,5 @@
             "sectionCaption": "Features and flags"
         }
     },
-    "required": ["maxComments", "wantEmbed"]
+    "required": []
 }
