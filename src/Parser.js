@@ -15,7 +15,7 @@ class Parser {
     createUserObject(json) {
         try {
             return {
-                id: json.id,
+                id: json?.id ?? null,
                 creationDate: json.created_at,
                 lastModifiedDate: json.last_modified,
                 url: json.permalink_url,
