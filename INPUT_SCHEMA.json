@@ -1,0 +1,72 @@
+{
+    "title": "SoundCloud Scraper",
+    "description": "Scrape data from SoundCloud!",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "usernames": {
+            "title": "Usernames",
+            "type": "array",
+            "description": "List of users you want to scrape.",
+            "editor": "stringList",
+            "maxItems": 20,
+            "uniqueItems": true,
+            "nullable": false,
+            "default": []
+        },
+        "keywords": {
+            "title": "Keywords",
+            "type": "array",
+            "description": "List of query terms you want to search by, and then scrape the tracks.",
+            "editor": "stringList",
+            "maxItems": 20,
+            "uniqueItems": true,
+            "nullable": false,
+            "default": []
+        },
+        "urls": {
+            "title": "URLs",
+            "type": "array",
+            "description": "List of valid SoundCloud URLs either to a user page, or a query page.",
+            "editor": "stringList",
+            "maxItems": 20,
+            "uniqueItems": true,
+            "nullable": false,
+            "default": []
+        },
+        "maxComments": {
+            "title": "Maximum Comments (0 -> No Comments)",
+            "type": "integer",
+            "description": "How many comments on each track do you want to scrape? (Max 300)",
+            "editor": "number",
+            "default": 0,
+            "maximum": 300,
+            "minimum": 0,
+            "unit": "comments"
+        },
+        "maxQueryResults": {
+            "title": "Maximum Query Results (Ignore if not scraping by keywords)",
+            "type": "integer",
+            "description": "How many results do you want for each keyword search? (Max 2000)",
+            "editor": "number",
+            "default": 200,
+            "maximum": 2000,
+            "minimum": 200,
+            "unit": "results"
+        },
+        "clientId": {
+            "title": "client_id",
+            "type": "string",
+            "description": "SoundCloud API Client ID (Leave empty to use default)",
+            "editor": "textfield"
+        },
+        "debug": {
+            "title": "Debug mode",
+            "type": "boolean",
+            "default": false,
+            "description": "Log to console",
+            "sectionCaption": "Features and flags"
+        }
+    },
+    "required": ["maxComments", "wantEmbed"]
+}
