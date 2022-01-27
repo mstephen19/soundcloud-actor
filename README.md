@@ -4,59 +4,61 @@ Scrape information on tracks, users, and comments with this free SoundCloud scra
 
 SoundCloud is an online audio streaming service ideal for connecting emerging artists with an audience in pursuit of discovering new music. Therefore, its user base can be split into creators, listeners, and curators, who connect the two by creating playlists. The ability to comment on tracks adds a layer of interaction to the platform, and SoundCloud can therefore be viewed as [a form of social media](https://plus.inflyteapp.com/soundcloud-say-were-a-form-of-social-media/).
 
-SoundCloud has closed its Google Form for granting developers access to its API, making gathering data from the website all the more complicated. This actor aims to fill this gap in the market by offering a quick and easy solution to scrape user info, tracks, and comments. 
+SoundCloud has closed its Google Form for granting developers access to its API, making gathering data from the website all the more complicated. This actor aims to fill this gap in the market by offering a quick and easy solution to scrape user info, tracks, and comments.
 
 ### Table of contents
 
 <!-- toc start -->
-- [Features](#features)
-- [Use Cases](#use-cases)
-- [Tutorial](#tutorial)
-- [Input](#input)
-- [Output](#output)
- <!-- toc end -->
+
+-   [Features](#features)
+-   [Use Cases](#use-cases)
+-   [Tutorial](#tutorial)
+-   [Input](#input)
+-   [Output](#output)
+<!-- toc end -->
 
 ## Features
 
 By inputting a username, a keyword, or a URL, the scraper outputs the following:
-- Detailed user data 
-- Detailed track data along with its URL
-- Track embed data 
-- Track comments data (maximum of 300 comments)
+
+-   Detailed user data
+-   Detailed track data along with its URL
+-   Track embed data
+-   Track comments data (maximum of 300 comments)
 
 When provided a list of usernames/queries/URLs, this actor will simultaneously scrape them, and push them all to the dataset, separated into objects titled after the input provided.
 
 ## Use Cases
 
-- Embedding of tracks into on-site SoundCloud widgets 
-- Collecting user statistics based on their metrics
-- Gathering social media information about users
-- Discovering trends based on popular SoundCloud tracks
-- Integrating SoundCloud search results into your app
+-   Embedding of tracks into on-site SoundCloud widgets
+-   Collecting user statistics based on their metrics
+-   Gathering social media information about users
+-   Discovering trends based on popular SoundCloud tracks
+-   Integrating SoundCloud search results into your app
 
 ## Tutorial
 
-- Click the green Try for free button.
-- You will be redirected to our Apify console - sign in or create a new account.
-- Fill in the input parameters, based on your needs:
-  - Usernames: insert users you wish to scrape
-  - Keywords: insert queries with which you want to search SoundCloud and then scrape the resulted tracks
-  - URLs: insert a page that will be scraped for a list of tracks
-  - Maximum comments: insert a number in the range of 0-200 based on the number of comments you want to scrape from each track
-- Hit the Run button
-- When the scrape is complete, you will find the results in the Dataset tab, where you can export them to various formats (HTML, JSON, CSV, Excel, and XML)
+-   Click the green Try for free button.
+-   You will be redirected to our Apify console - sign in or create a new account.
+-   Fill in the input parameters, based on your needs:
+    -   Usernames: insert users you wish to scrape
+    -   Keywords: insert queries with which you want to search SoundCloud and then scrape the resulted tracks
+    -   URLs: insert a page that will be scraped for a list of tracks
+    -   Maximum comments: insert a number in the range of 0-200 based on the number of comments you want to scrape from each track
+-   Hit the Run button
+-   When the scrape is complete, you will find the results in the Dataset tab, where you can export them to various formats (HTML, JSON, CSV, Excel, and XML)
 
 ## Input
 
-| Field | Type | Default | Description |
-| - | - | - | - |
-| usernames | array | [] | List of SoundCloud usernames to scrape. |
-| keywords | array | [] | List of keywords to query and scrape results of. |
-| urls | array | [] | List of URLs (can scrape user pages, or query pages). |
-| maxComments | number | 0 | The maximum comments you want a track's data to have (max: 300). |
-| maxQueryResults | number | 200 | The maximum number of results you want back from a keyword search (max: 2000). |
-| clientId | string | - | SoundCloud API client ID. NOT REQUIRED. Leave empty to use default. |
-| debug | booleean | false | Switch to true in order to receive frequent and descriptive debug logs about what the scraper is doing. |
+| Field           | Type     | Default | Description                                                                                             |
+| --------------- | -------- | ------- | ------------------------------------------------------------------------------------------------------- |
+| usernames       | array    | []      | List of SoundCloud usernames to scrape.                                                                 |
+| keywords        | array    | []      | List of keywords to query and scrape results of.                                                        |
+| urls            | array    | []      | List of URLs (can scrape user pages, or query pages).                                                   |
+| maxComments     | number   | 0       | The maximum comments you want a track's data to have (max: 250).                                        |
+| maxQueryResults | number   | 200     | The maximum number of results you want back from a keyword search (max: 1400).                          |
+| clientId        | string   | -       | SoundCloud API client ID. NOT REQUIRED. Leave empty to use default.                                     |
+| debug           | booleean | false   | Switch to true in order to receive frequent and descriptive debug logs about what the scraper is doing. |
 
 ### Example Input:
 
@@ -163,4 +165,5 @@ Tracks will never be empty, however. A track object looks like this:
 ```
 
 ### Output for a keyword query
+
 Keyword queries work a bit differently. By scraping by keyword, the scraper gives back the raw data SoundCloud uses from their own API. This means that every object includes a plethora of information about the result it represents.

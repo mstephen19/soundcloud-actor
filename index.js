@@ -74,7 +74,7 @@ Apify.main(async () => {
         maxRequestRetries: 5,
         handlePageTimeoutSecs: 120,
         autoscaledPoolOptions: {
-            desiredConcurrency: 50,
+            desiredConcurrency: 100,
         },
         handlePageFunction: async (context) => {
             const { label } = context.request.userData;

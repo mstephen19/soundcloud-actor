@@ -37,20 +37,20 @@
         "maxComments": {
             "title": "Maximum Comments (0 -> No Comments)",
             "type": "integer",
-            "description": "How many comments on each track do you want to scrape? (Max 300)",
+            "description": "How many comments on each track do you want to scrape? (Max 200)",
             "editor": "number",
             "default": 0,
-            "maximum": 300,
+            "maximum": 250,
             "minimum": 0,
             "unit": "comments"
         },
         "maxQueryResults": {
             "title": "Maximum Query Results (Ignore if not scraping by keywords)",
             "type": "integer",
-            "description": "How many results do you want for each keyword search? (Max 2000)",
+            "description": "How many results do you want for each keyword search? (Max 1400)",
             "editor": "number",
             "default": 200,
-            "maximum": 2000,
+            "maximum": 1400,
             "minimum": 0,
             "unit": "results"
         },
