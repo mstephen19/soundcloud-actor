@@ -36,13 +36,16 @@ Apify.main(async () => {
             },
         },
         proxyConfiguration,
+        preNavigationHooks: [
+            async (context) => {
+                // Make page load quicker
+                await puppeteer.blockRequests(context.page, {
+                    urlPatterns: ['.css', '.jpg', '.jpeg', '.png', '.svg', '.gif', '.woff', '.pdf', '.zip'],
+                });
+            },
+        ],
         handlePageFunction: async (context) => {
             const { label } = context.request.userData;
-
-            // Make page load quicker
-            await puppeteer.blockRequests(context.page, {
-                urlPatterns: ['.css', '.jpg', '.jpeg', '.png', '.svg', '.gif', '.woff', '.pdf', '.zip'],
-            });
 
             switch (label) {
                 case 'USER_PAGE': {

@@ -21,13 +21,13 @@ const cleanInput = async ({
     for (const username of usernames) {
         switch (true) {
             case username.match(/\s/g): {
-                log.error("SoundCloud usernames can't have spaces! Don't include spaces next time.");
+                log.warning("SoundCloud usernames can't have spaces! Don't include spaces next time.");
                 username.replace(/\s/g, '');
                 cleanUsernames.push(username);
                 break;
             }
             case username.match(/[!$%^&*()+|~=`{}\[\]:";'<>?,.\/]/): {
-                log.error('Soundcloud usernames can only have the symbols "-" and "_". Don\'t include these next time.');
+                log.warning('Soundcloud usernames can only have the symbols "-" and "_". Don\'t include these next time.');
                 username.replace(/[!$%^&*()+|~=`{}\[\]:";'<>?,.\/]/, '');
                 cleanUsernames.push(username);
                 break;

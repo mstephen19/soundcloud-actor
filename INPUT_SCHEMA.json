@@ -53,7 +53,7 @@
         "maxQueryResults": {
             "title": "Maximum Query Results (Ignore if not scraping by keywords)",
             "type": "integer",
-            "description": "How many results do you want for each keyword search? (Max 1000)",
+            "description": "How many results do you want for each keyword search? (Max 1500)",
             "editor": "number",
             "prefill": 200,
             "maximum": 1500,
