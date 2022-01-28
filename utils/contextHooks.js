@@ -7,6 +7,8 @@ const vm2 = new VM();
 // This prevents us from needing to await the getValue every time we want the state object
 let runContext;
 
+let stringReducerFn;
+
 // We update the KVStore with the run context every 15 seconds
 let nextUpdate;
 
@@ -25,6 +27,8 @@ const createKVContext = async (state, userReducer) => {
         // Set context for run as well as store it in the KVStore
         runContext = state;
 
+        stringReducerFn = `${stringReducer()}`;
+
         nextUpdate = new Date();
         nextUpdate.setSeconds(nextUpdate.getSeconds() + 15);
 
@@ -36,8 +40,8 @@ const createKVContext = async (state, userReducer) => {
 
 const useKVContext = async () => {
     try {
-        // Pull from KVStore
-        const { stringReducer } = await Apify.getValue('REDUCER');
+        // If not local in run, pull from KVStore
+        const stringReducer = stringReducerFn ?? (await Apify.getValue('REDUCER').stringReducer);
 
         // Get our reducer function from string
         const reducer = vm2.run(stringReducer);
