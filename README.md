@@ -64,12 +64,13 @@ When provided a list of usernames/queries/URLs, this actor will simultaneously s
 
 ```JSON
 {
-    "usernames": ["skrillex"],
-    "keywords": ["rap", "house music"],
-    "urls": ["soundcloud.com/k_dubs", "https://soundcloud.com/search?q=music"],
+    "usernames": ["k_dubs", "skrillex", "marshmellomusic", "mestomusic"],
+    "keywords": ["music", "dubstep", "lofi beat", "beats", "cool", "test", "soundcloud"],
+    "urls": ["soundcloud.com/martingarrix", "soundcloud.com/onstat"],
     "maxComments": 20,
     "maxQueryResults": 800,
-    "debug": false
+    "maxConcurrency": 150,
+    "debug": true
 }
 ```
 

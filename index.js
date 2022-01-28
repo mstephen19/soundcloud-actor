@@ -63,18 +63,15 @@ Apify.main(async () => {
     const cheerioRequestList = await Apify.openRequestList('cheerio-urls', state().cheerioRequestList);
     const cheerioRequestQueue = await Apify.openRequestQueue();
 
-    const { usernames, keywords, urls } = state().input;
-    const totalEntries = usernames.length + keywords.length + urls.length;
-
     const cheerio = new Apify.CheerioCrawler({
         requestList: cheerioRequestList,
         requestQueue: cheerioRequestQueue,
-        maxConcurrency: totalEntries <= 1 ? 200 : 100,
+        maxConcurrency: state().input.maxConcurrency,
         requestTimeoutSecs: 120,
         maxRequestRetries: 5,
         handlePageTimeoutSecs: 120,
         autoscaledPoolOptions: {
-            desiredConcurrency: 100,
+            desiredConcurrency: state().input.maxConcurrency,
         },
         handlePageFunction: async (context) => {
             const { label } = context.request.userData;
@@ -103,5 +100,13 @@ Apify.main(async () => {
         await cheerio.run();
         log.debug('Cheerio finished.');
     }
-    log.info('Crawl finished.');
+
+    const { usernames, keywords, urls } = state().input;
+    const totalEntries = usernames.length + keywords.length + urls.length;
+    const distance = new Date().getTime() - state().input.startTime;
+
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    log.info(`Scraped ${totalEntries} entries in ${minutes} minutes and ${seconds} seconds.`);
 });

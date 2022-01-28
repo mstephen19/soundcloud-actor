@@ -6,23 +6,26 @@ const Parser = require('./Parser');
 const { log } = Apify.utils;
 
 const handleUserPage = async ({ page, request }) => {
-    const [state, dispatch] = await useKVContext();
-
     const { username } = request.userData;
-    await page.waitForSelector('#content', { timeout: 2500 });
+    try {
+        const [state, dispatch] = await useKVContext();
+        await page.waitForSelector('#content', { timeout: 2500 });
 
-    // Parse hydration object from page and grab the user's ID
-    const { id } = await Parser.getUserObject(page, username);
+        // Parse hydration object from page and grab the user's ID
+        const { id } = await Parser.getUserObject(page, username);
 
-    if (!id) return log.error(`User with ${username} not found.`);
+        if (!id) return log.error(`User with ${username} not found.`);
 
-    log.debug(`Scraped user ${username} ID of ${id}. Updating cheerioRequestList`);
+        log.debug(`Scraped user ${username} ID of ${id}. Updating cheerioRequestList`);
 
-    // Add request to our context
-    return dispatch({
-        type: 'ADD_REQUEST',
-        payload: { url: `${API_URL}/users/${id}?client_id=${state().input.clientId}`, userData: { label: 'USER', identifier: id } },
-    });
+        // Add request to our context
+        return dispatch({
+            type: 'ADD_REQUEST',
+            payload: { url: `${API_URL}/users/${id}?client_id=${state().input.clientId}`, userData: { label: 'USER', identifier: id } },
+        });
+    } catch (error) {
+        throw new Error(`Failed to parse user object on page for ${username}`);
+    }
 };
 
 const handleUser = async ({ json, request, crawler: { requestQueue } }) => {
@@ -132,34 +135,37 @@ const handleTrackComments = async ({ json, request }) => {
 const handleQuery = async ({ json, request, crawler: { requestQueue } }) => {
     const [state, dispatch] = await useKVContext();
     const { identifier, number } = request.userData;
+    try {
+        if (!state().queries?.[identifier]) {
+            await dispatch({
+                type: 'ADD_QUERY',
+                payload: { [identifier]: [...json.collection] },
+            });
+        } else {
+            await dispatch({
+                type: 'ADD_TO_QUERY',
+                identifier,
+                payload: [...json.collection],
+            });
+        }
 
-    if (!state().queries?.[identifier]) {
-        await dispatch({
-            type: 'ADD_QUERY',
-            payload: { [identifier]: [...json.collection] },
+        if (state().queries[identifier].length >= state().input.maxQueryResults || !json?.next_href) {
+            log.info(`Scraped query ${identifier}`);
+            return Apify.pushData({
+                [identifier]: [{ type: 'query', rawResults: state().queries[identifier].length }, [...state().queries[identifier]]],
+            });
+        }
+
+        log.debug(`Paginating query request ${identifier} to page ${number + 1}`);
+        const url = new URL(request.url);
+        url.searchParams.set('offset', `${200 * number}`);
+        return requestQueue.addRequest({
+            url: url.toString(),
+            userData: { label: 'QUERY', identifier, number: number + 1 },
         });
-    } else {
-        await dispatch({
-            type: 'ADD_TO_QUERY',
-            identifier,
-            payload: [...json.collection],
-        });
+    } catch (error) {
+        throw new Error(`Failed on query page ${number} for query ${identifier}`);
     }
-
-    if (state().queries[identifier].length >= state().input.maxQueryResults || !json?.next_href) {
-        log.info(`Scraped query ${identifier}`);
-        return Apify.pushData({
-            [identifier]: [{ type: 'query', rawResults: state().queries[identifier].length }, [...state().queries[identifier]]],
-        });
-    }
-
-    log.debug(`Paginating query request ${identifier} to page ${number + 1}`);
-    const url = new URL(request.url);
-    url.searchParams.set('offset', `${200 * number}`);
-    return requestQueue.addRequest({
-        url: url.toString(),
-        userData: { label: 'QUERY', identifier, number: number + 1 },
-    });
 };
 
 module.exports = { handleUserPage, handleUser, handleQuery, handleUserTracks, handleTrackComments };

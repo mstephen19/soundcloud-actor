@@ -9,7 +9,7 @@
             "type": "array",
             "description": "List of users you want to scrape.",
             "editor": "stringList",
-            "maxItems": 20,
+            "maxItems": 50,
             "uniqueItems": true,
             "nullable": false,
             "default": []
@@ -19,7 +19,7 @@
             "type": "array",
             "description": "List of query terms you want to search by, and then scrape the tracks.",
             "editor": "stringList",
-            "maxItems": 20,
+            "maxItems": 50,
             "uniqueItems": true,
             "nullable": false,
             "default": []
@@ -29,7 +29,7 @@
             "type": "array",
             "description": "List of valid SoundCloud URLs either to a user page, or a query page.",
             "editor": "stringList",
-            "maxItems": 20,
+            "maxItems": 50,
             "uniqueItems": true,
             "nullable": false,
             "default": []
@@ -59,6 +59,16 @@
             "type": "string",
             "description": "SoundCloud API Client ID (Leave empty to use default)",
             "editor": "textfield"
+        },
+        "maxConcurrency": {
+            "title": "maxConcurrency",
+            "type": "integer",
+            "description": "Maximum number of operation that can happen simultaneously.",
+            "editor": "number",
+            "default": 100,
+            "maximum": 999,
+            "minimum": 1,
+            "unit": "operations"
         },
         "debug": {
             "title": "Debug mode",

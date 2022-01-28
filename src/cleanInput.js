@@ -3,7 +3,15 @@ const { log } = require('apify').utils;
 const { useKVContext } = require('../utils/contextHooks');
 const { DEFAULT_CLIENT_ID } = require('./constants');
 
-const cleanInput = async ({ usernames = [], keywords = [], urls = [], maxComments = 0, maxQueryResults = 200, clientId = DEFAULT_CLIENT_ID }) => {
+const cleanInput = async ({
+    usernames = [],
+    keywords = [],
+    urls = [],
+    maxComments = 0,
+    maxQueryResults = 200,
+    maxConcurrency = 100,
+    clientId = DEFAULT_CLIENT_ID,
+}) => {
     for (const keyword of keywords) {
         if (typeof keyword !== 'string') throw new Error('Keyword must be a string!');
     }
@@ -39,7 +47,9 @@ const cleanInput = async ({ usernames = [], keywords = [], urls = [], maxComment
                 urls,
                 maxComments,
                 maxQueryResults,
+                maxConcurrency,
                 clientId,
+                startTime: new Date().getTime(),
             },
         },
     });
