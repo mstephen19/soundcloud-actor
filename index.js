@@ -24,6 +24,8 @@ Apify.main(async () => {
     // Create list of user pages to grab IDs from, and store API ready requests in state.cheerioRequestList
     const puppeteerRequestList = await createRequestList();
 
+    const proxyConfiguration = await Apify.createProxyConfiguration({ ...input.proxy });
+
     const puppy = new Apify.PuppeteerCrawler({
         requestList: puppeteerRequestList,
         maxConcurrency: 50,
@@ -33,6 +35,7 @@ Apify.main(async () => {
                 headless: true,
             },
         },
+        proxyConfiguration,
         handlePageFunction: async (context) => {
             const { label } = context.request.userData;
 
@@ -73,6 +76,7 @@ Apify.main(async () => {
         autoscaledPoolOptions: {
             desiredConcurrency: state().input.maxConcurrency,
         },
+        proxyConfiguration,
         handlePageFunction: async (context) => {
             const { label } = context.request.userData;
             switch (label) {

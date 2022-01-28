@@ -60,7 +60,7 @@ const handleUserTracks = async ({ json, request, crawler: { requestQueue } }) =>
         const { collection } = json;
 
         if (collection.length > 150) {
-            log.warning(`User with username ${state().users[identifier].username} has ${collection.length} tracks. This may take a few minutes.`);
+            log.warning(`User with username ${state().users[identifier].username} has ${collection.length} tracks. This may take a bit longer.`);
         }
 
         // If we want comments, prepare for it

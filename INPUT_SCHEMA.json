@@ -76,6 +76,17 @@
             "default": false,
             "description": "Log to console",
             "sectionCaption": "Features and flags"
+        },
+        "proxy": {
+            "title": "Proxy configuration",
+            "type": "object",
+            "description": "Select proxies to be used by your crawler.",
+            "prefill": {
+                "useApifyProxy": false,
+                "apifyProxyGroups": ["SHADER"],
+                "apifyProxyCountry": "US"
+            },
+            "editor": "proxy"
         }
     },
     "required": []

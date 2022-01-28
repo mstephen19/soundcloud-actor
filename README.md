@@ -58,15 +58,16 @@ When provided a list of usernames/queries/URLs, this actor will simultaneously s
 | maxComments     | number   | 0       | The maximum comments you want a track's data to have (max: 250).                                        |
 | maxQueryResults | number   | 200     | The maximum number of results you want back from a keyword search (max: 1400).                          |
 | clientId        | string   | -       | SoundCloud API client ID. NOT REQUIRED. Leave empty to use default.                                     |
+| maxConcurrency  | number   | 100     | The maximum number of operations that can happen at one time.                                           |
 | debug           | booleean | false   | Switch to true in order to receive frequent and descriptive debug logs about what the scraper is doing. |
 
 ### Example Input:
 
 ```JSON
 {
-    "usernames": ["k_dubs", "skrillex", "marshmellomusic", "mestomusic"],
+    "usernames": ["k_dubs", "skrillex", "marshmellomusic", "mestomusic", "diplo", "kodak-black"],
     "keywords": ["music", "dubstep", "lofi beat", "beats", "cool", "test", "soundcloud"],
-    "urls": ["soundcloud.com/martingarrix", "soundcloud.com/onstat"],
+    "urls": ["soundcloud.com/martingarrix", "soundcloud.com/onstat", "https://soundcloud.com/search?q=test"],
     "maxComments": 20,
     "maxQueryResults": 800,
     "maxConcurrency": 150,
