@@ -149,10 +149,18 @@ const handleQuery = async ({ json, request, crawler: { requestQueue } }) => {
             });
         }
 
-        if (state().queries[identifier].length >= state().input.maxQueryResults || !json?.next_href) {
+        const actualLength = state().queries[identifier].length;
+        const desiredLength = state().input.maxQueryResults;
+
+        if (actualLength >= desiredLength || !json?.next_href) {
+            let results = state().queries[identifier];
+            if (actualLength > desiredLength) {
+                results = results.slice(0, desiredLength);
+            }
+
             log.info(`Scraped query ${identifier}`);
             return Apify.pushData({
-                [identifier]: [{ type: 'query', rawResults: state().queries[identifier].length }, [...state().queries[identifier]]],
+                [identifier]: [{ type: 'query', rawResults: results.length }, [...results]],
             });
         }
 
