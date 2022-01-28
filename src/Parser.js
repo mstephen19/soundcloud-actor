@@ -8,14 +8,14 @@ class Parser {
             const { data } = dJSON.parse(html.split('window.__sc_hydration =')[1].split('</script>')[0].replace(';', ''))[5];
             return data;
         } catch (error) {
-            throw new Error(`Failed to parse user object for ${username}: ${error}`);
+            return { id: false };
         }
     }
 
     createUserObject(json) {
         try {
             return {
-                id: json?.id ?? null,
+                id: json.id,
                 creationDate: json.created_at,
                 lastModifiedDate: json.last_modified,
                 url: json.permalink_url,
