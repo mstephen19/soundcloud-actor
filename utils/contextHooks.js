@@ -9,9 +9,6 @@ let runContext;
 
 let stringReducerFn;
 
-// We update the KVStore with the run context every 15 seconds
-let nextUpdate;
-
 const createKVContext = async (state, userReducer) => {
     if (!state) throw new Error('Must provide an initial state.');
     if (!userReducer) throw new Error('Must provide a reducer function.');
@@ -29,11 +26,13 @@ const createKVContext = async (state, userReducer) => {
 
         stringReducerFn = `${stringReducer()}`;
 
-        nextUpdate = new Date();
-        nextUpdate.setSeconds(nextUpdate.getSeconds() + 15);
-
         await Apify.setValue('REDUCER', { stringReducer: `${stringReducer()}` });
-        return Apify.setValue('CONTEXT', { state });
+        await Apify.setValue('CONTEXT', { state });
+
+        return setInterval(async () => {
+            log.info('Saving context to KVStore');
+            return Apify.setValue('CONTEXT', { state: runContext });
+        }, 15000);
     }
     throw new Error('Context already exists!');
 };
@@ -52,14 +51,6 @@ const useKVContext = async () => {
 
             const newState = reducer(runContext, action);
             runContext = newState;
-
-            // If it's time to update, update the context.
-            if (nextUpdate < new Date()) {
-                log.info('Saving context to KVStore');
-                nextUpdate = new Date();
-                nextUpdate.setSeconds(nextUpdate.getSeconds() + 15);
-                return Apify.setValue('CONTEXT', { state: runContext });
-            }
         };
 
         const getState = () => {

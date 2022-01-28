@@ -13,7 +13,7 @@ const { log, puppeteer } = Apify.utils;
 Apify.main(async () => {
     // Initialize our state context
     await initContext();
-    const [state] = await useKVContext();
+    const [state, dispatch] = await useKVContext();
 
     // Grab input, validate it, and add it to the sate
     const input = await Apify.getInput();
@@ -47,7 +47,7 @@ Apify.main(async () => {
             switch (label) {
                 case 'USER_PAGE': {
                     // Add API requests to state.cheerioRequestList from user IDs
-                    return handleUserPage(context);
+                    return handleUserPage(context, { state, dispatch });
                 }
                 default: {
                     break;
@@ -81,16 +81,16 @@ Apify.main(async () => {
             const { label } = context.request.userData;
             switch (label) {
                 case 'USER': {
-                    return handleUser(context);
+                    return handleUser(context, { state, dispatch });
                 }
                 case 'QUERY': {
-                    return handleQuery(context);
+                    return handleQuery(context, { state, dispatch });
                 }
                 case 'USER_TRACKS': {
-                    return handleUserTracks(context);
+                    return handleUserTracks(context, { state, dispatch });
                 }
                 case 'TRACK_COMMENTS': {
-                    return handleTrackComments(context);
+                    return handleTrackComments(context, { state, dispatch });
                 }
                 default: {
                     break;

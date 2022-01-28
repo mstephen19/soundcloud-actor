@@ -5,10 +5,9 @@ const Parser = require('./Parser');
 
 const { log } = Apify.utils;
 
-const handleUserPage = async ({ page, request }) => {
+const handleUserPage = async ({ page, request }, { state, dispatch }) => {
     const { username } = request.userData;
     try {
-        const [state, dispatch] = await useKVContext();
         await page.waitForSelector('#content', { timeout: 2500 });
 
         // Parse hydration object from page and grab the user's ID
@@ -28,8 +27,7 @@ const handleUserPage = async ({ page, request }) => {
     }
 };
 
-const handleUser = async ({ json, request, crawler: { requestQueue } }) => {
-    const [state, dispatch] = await useKVContext();
+const handleUser = async ({ json, request, crawler: { requestQueue } }, { state, dispatch }) => {
     const { identifier } = request.userData;
     log.debug(`Handling user with ID ${identifier}`);
     try {
@@ -51,8 +49,7 @@ const handleUser = async ({ json, request, crawler: { requestQueue } }) => {
     }
 };
 
-const handleUserTracks = async ({ json, request, crawler: { requestQueue } }) => {
-    const [state, dispatch] = await useKVContext();
+const handleUserTracks = async ({ json, request, crawler: { requestQueue } }, { state, dispatch }) => {
     const { identifier } = request.userData;
     log.debug(`Handling user ${identifier} tracks`);
     try {
@@ -95,8 +92,7 @@ const handleUserTracks = async ({ json, request, crawler: { requestQueue } }) =>
     }
 };
 
-const handleTrackComments = async ({ json, request }) => {
-    const [state, dispatch] = await useKVContext();
+const handleTrackComments = async ({ json, request }, { state, dispatch }) => {
     const { identifier, trackId, trackNumber } = request.userData;
     log.debug(`Handling track comments for track with ID ${trackId}`);
     try {
@@ -121,39 +117,36 @@ const handleTrackComments = async ({ json, request }) => {
         if (state().users[identifier].tracks.length >= trackNumber) {
             log.info(`Scraped user with username of ${state().users[identifier].username}`);
             return Apify.pushData({ [state().users[identifier].username]: [{ type: 'user' }, { ...state().users[identifier] }] });
-
-            // return dispatch({
-            //     type: 'DELETE_USER',
-            //     payload: identifier,
-            // });
         }
     } catch (error) {
         throw new Error(`Failed to grab track comments for track with ID ${trackId}: ${error}`);
     }
 };
 
-const handleQuery = async ({ json, request, crawler: { requestQueue } }) => {
-    const [state, dispatch] = await useKVContext();
+const handleQuery = async ({ json, request, crawler: { requestQueue } }, { state, dispatch }) => {
     const { identifier, number } = request.userData;
     try {
+        // If query doesn't exist in the context, instantiate it
         if (!state().queries?.[identifier]) {
             await dispatch({
                 type: 'ADD_QUERY',
                 payload: { [identifier]: [...json.collection] },
             });
         } else {
+            // Otherwise just add results to the query state
             await dispatch({
                 type: 'ADD_TO_QUERY',
                 identifier,
                 payload: [...json.collection],
             });
         }
-
         const actualLength = state().queries[identifier].length;
         const desiredLength = state().input.maxQueryResults;
 
         if (actualLength >= desiredLength || !json?.next_href) {
             let results = state().queries[identifier];
+
+            // Ensure we are only giving back number of results that was requested in input
             if (actualLength > desiredLength) {
                 results = results.slice(0, desiredLength);
             }
@@ -166,6 +159,8 @@ const handleQuery = async ({ json, request, crawler: { requestQueue } }) => {
 
         log.debug(`Paginating query request ${identifier} to page ${number + 1}`);
         const url = new URL(request.url);
+
+        // Max results is 200, so offset it by 200 * requestNumber
         url.searchParams.set('offset', `${200 * number}`);
         return requestQueue.addRequest({
             url: url.toString(),
