@@ -112,5 +112,5 @@ Apify.main(async () => {
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    log.info(`Scraped ${totalEntries} entries in ${minutes} minutes and ${seconds} seconds.`);
+    log.info(`Handled ${totalEntries} entries in ${minutes} minutes and ${seconds} seconds.`);
 });

@@ -43,21 +43,21 @@
         "maxComments": {
             "title": "Maximum Comments (0 -> No Comments)",
             "type": "integer",
-            "description": "How many comments on each track do you want to scrape? (Max 200)",
+            "description": "How many comments on each track do you want to scrape? (Max 350)",
             "editor": "number",
             "default": 0,
-            "maximum": 200,
+            "maximum": 350,
             "minimum": 0,
             "unit": "comments"
         },
         "maxQueryResults": {
             "title": "Maximum Query Results (Ignore if not scraping by keywords)",
             "type": "integer",
-            "description": "How many results do you want for each keyword search? (Max 500)",
+            "description": "How many results do you want for each keyword search? (Max 1000)",
             "editor": "number",
-            "default": 200,
-            "maximum": 500,
-            "minimum": 0,
+            "prefill": 200,
+            "maximum": 1500,
+            "minimum": 1,
             "unit": "results"
         },
         "maxConcurrency": {
@@ -66,7 +66,7 @@
             "description": "Maximum number of operation that can happen simultaneously.",
             "editor": "number",
             "default": 100,
-            "maximum": 100,
+            "maximum": 200,
             "minimum": 1,
             "unit": "operations"
         },
@@ -81,7 +81,7 @@
             "title": "Proxy configuration",
             "type": "object",
             "description": "Select proxies to be used by your crawler.",
-            "prefill": {
+            "default": {
                 "useApifyProxy": false,
                 "apifyProxyGroups": ["SHADER"],
                 "apifyProxyCountry": "US"

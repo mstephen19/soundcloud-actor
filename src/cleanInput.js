@@ -8,7 +8,7 @@ const cleanInput = async ({
     keywords = [],
     urls = [],
     maxComments = 0,
-    maxQueryResults = 200,
+    maxQueryResults = 1,
     maxConcurrency = 100,
     clientId = DEFAULT_CLIENT_ID,
 }) => {
@@ -16,9 +16,27 @@ const cleanInput = async ({
         if (typeof keyword !== 'string') throw new Error('Keyword must be a string!');
     }
 
+    // Validate usernames
+    const cleanUsernames = [];
     for (const username of usernames) {
-        if (username.match(/\s/g)) throw new Error("SoundCloud usernames can't have spaces!");
-        if (username.match(/[!$%^&*()+|~=`{}\[\]:";'<>?,.\/]/)) throw new Error('Soundcloud usernames can only have the symbols "-" and "_"');
+        switch (true) {
+            case username.match(/\s/g): {
+                log.error("SoundCloud usernames can't have spaces! Don't include spaces next time.");
+                username.replace(/\s/g, '');
+                cleanUsernames.push(username);
+                break;
+            }
+            case username.match(/[!$%^&*()+|~=`{}\[\]:";'<>?,.\/]/): {
+                log.error('Soundcloud usernames can only have the symbols "-" and "_". Don\'t include these next time.');
+                username.replace(/[!$%^&*()+|~=`{}\[\]:";'<>?,.\/]/, '');
+                cleanUsernames.push(username);
+                break;
+            }
+            default: {
+                cleanUsernames.push(username);
+                break;
+            }
+        }
     }
 
     for (const url of urls) {
@@ -26,14 +44,12 @@ const cleanInput = async ({
             try {
                 return new URL(url) || new URL(`https://${url}`);
             } catch (err) {
-                return err;
+                return false;
             }
         })();
         if (!works || !url.includes('soundcloud.com')) throw new Error('Invalid SoundCloud URL provided!');
         if (!url.startsWith('https://')) log.warning('Please include "https://" at the beginning of the URL next time.');
     }
-
-    if (maxQueryResults < 200) maxQueryResults = 200;
 
     const [state, dispatch] = await useKVContext();
 
@@ -42,7 +58,7 @@ const cleanInput = async ({
         type: 'GENERAL',
         payload: {
             input: {
-                usernames,
+                usernames: cleanUsernames,
                 keywords,
                 urls,
                 maxComments,

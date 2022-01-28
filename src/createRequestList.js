@@ -20,9 +20,17 @@ const createRequestList = async () => {
         });
     }
 
+    // The max limit SoundCloud API allows for search results is 200
+    const queryLimit = state().input.maxQueryResults > 200 ? 200 : state().input.maxQueryResults;
+
+    await dispatch({
+        type: 'GENERAL',
+        payload: { queryLimit },
+    });
+
     for (const keyword of state().input.keywords) {
         cheerioRequestList.push({
-            url: `${API_URL}/search?q=${keyword}&client_id=${state().input.clientId}&limit=200`,
+            url: `${API_URL}/search?q=${keyword}&client_id=${state().input.clientId}&limit=${queryLimit}&offset=0`,
             userData: { label: 'QUERY', identifier: keyword, number: 1 },
         });
     }
@@ -32,7 +40,7 @@ const createRequestList = async () => {
             // Parse query and format QUERY request
             const keyword = new URL(link).searchParams.get('q');
             cheerioRequestList.push({
-                url: `${API_URL}/search?q=${keyword}&client_id=${state().input.clientId}&limit=200&offset=0`,
+                url: `${API_URL}/search?q=${keyword}&client_id=${state().input.clientId}&limit=${queryLimit}&offset=0`,
                 userData: { label: 'QUERY', identifier: keyword, number: 1 },
             });
         } else {

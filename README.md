@@ -41,25 +41,27 @@ When provided a list of usernames/queries/URLs, this actor will simultaneously s
 -   Click the green Try for free button.
 -   You will be redirected to our Apify console - sign in or create a new account.
 -   Fill in the input parameters, based on your needs:
-    -   Usernames: insert users you wish to scrape
-    -   Keywords: insert queries with which you want to search SoundCloud and then scrape the resulted tracks
-    -   URLs: insert a page that will be scraped for a list of tracks
-    -   Maximum comments: insert a number in the range of 0-200 based on the number of comments you want to scrape from each track
+    -   Usernames: Insert users you wish to scrape.
+    -   Keywords: Insert queries with which you want to search SoundCloud and then scrape the resulted tracks.
+    -   URLs: Insert a page that will be scraped for a user data, or query results. **The scraper will not scrape just a single track/playlist at this time.**
+    -   Maximum comments: Insert a number in the range of 0-350 based on the number of comments you want to scrape from each track.
+    -   Maximum query results: Insert a number between 1-2500 based on how many results you want back from each keyword search.
+    -   maxConcurrency: How fast do you want to scrape? This signifies how many operations can happen simultaneously (Max 200)
 -   Hit the Run button
 -   When the scrape is complete, you will find the results in the Dataset tab, where you can export them to various formats (HTML, JSON, CSV, Excel, and XML)
 
 ## Input
 
-| Field           | Type     | Default | Description                                                                                             |
-| --------------- | -------- | ------- | ------------------------------------------------------------------------------------------------------- |
-| usernames       | array    | []      | List of SoundCloud usernames to scrape.                                                                 |
-| keywords        | array    | []      | List of keywords to query and scrape results of.                                                        |
-| urls            | array    | []      | List of URLs (can scrape user pages, or query pages).                                                   |
-| maxComments     | number   | 0       | The maximum comments you want a track's data to have (max: 200).                                        |
-| maxQueryResults | number   | 200     | The maximum number of results you want back from a keyword search (max: 500).                           |
-| clientId        | string   | -       | SoundCloud API client ID. NOT REQUIRED. Leave empty to use default.                                     |
-| maxConcurrency  | number   | 100     | The maximum number of operations that can happen at one time. (max: 100)                                |
-| debug           | booleean | false   | Switch to true in order to receive frequent and descriptive debug logs about what the scraper is doing. |
+| Field           | Type    | Default | Description                                                                                             |
+| --------------- | ------- | ------- | ------------------------------------------------------------------------------------------------------- |
+| usernames       | array   | []      | List of SoundCloud usernames to scrape.                                                                 |
+| keywords        | array   | []      | List of keywords to query and scrape results of.                                                        |
+| urls            | array   | []      | List of URLs (can scrape user pages, or query pages). **ONLY FOR QUERIES AND USERS**                    |
+| maxComments     | number  | 0       | The maximum comments you want a track's data to have (max: 350).                                        |
+| maxQueryResults | number  | 1       | The maximum number of results you want back from a keyword search (max: 1500).                          |
+| clientId        | string  | -       | SoundCloud API client ID. NOT REQUIRED. Leave empty to use default.                                     |
+| maxConcurrency  | number  | 100     | The maximum number of operations that can happen at one time. (max: 200)                                |
+| debug           | boolean | false   | Switch to true in order to receive frequent and descriptive debug logs about what the scraper is doing. |
 
 ### Example Input:
 
@@ -68,27 +70,14 @@ When provided a list of usernames/queries/URLs, this actor will simultaneously s
     "usernames": ["k_dubs", "skrillex", "marshmellomusic", "mestomusic", "diplo", "kodak-black"],
     "keywords": ["music", "dubstep", "lofi beat", "beats", "cool", "test", "soundcloud"],
     "urls": ["soundcloud.com/martingarrix", "soundcloud.com/onstat", "https://soundcloud.com/search?q=test"],
-    "maxComments": 20,
-    "maxQueryResults": 300,
+    "maxComments": 200,
+    "maxQueryResults": 1000,
     "maxConcurrency": 100,
     "debug": true
 }
 ```
 
 ## Output
-
-Every output object will include the username/keyword it is for, as well as some information about the operation:
-
-```JSON
-{
-  "house": [
-    {
-      "type": "query",
-      "rawResults": 800
-    },
-  ]
-}
-```
 
 ### Example of output for a username query
 

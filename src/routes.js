@@ -1,5 +1,4 @@
 const Apify = require('apify');
-const { useKVContext } = require('../utils/contextHooks');
 const { API_URL } = require('./constants');
 const Parser = require('./Parser');
 
@@ -13,9 +12,9 @@ const handleUserPage = async ({ page, request }, { state, dispatch }) => {
         // Parse hydration object from page and grab the user's ID
         const { id } = await Parser.getUserObject(page, username);
 
-        if (!id) return log.error(`User with ${username} not found.`);
+        if (!id) return log.error(`User with ${username} not found. Improper username provided.`);
 
-        log.debug(`Scraped user ${username} ID of ${id}. Updating cheerioRequestList`);
+        log.info(`Grabbed user ID for ${username}: ${id}.`);
 
         // Add request to our context
         return dispatch({
@@ -56,7 +55,7 @@ const handleUserTracks = async ({ json, request, crawler: { requestQueue } }, { 
         // This "collection" is all of our user's tracks
         const { collection } = json;
 
-        if (collection.length > 150) {
+        if (collection.length > 175) {
             log.warning(`User with username ${state().users[identifier].username} has ${collection.length} tracks. This may take a bit longer.`);
         }
 
@@ -86,7 +85,7 @@ const handleUserTracks = async ({ json, request, crawler: { requestQueue } }, { 
             return;
         }
         log.info(`Scraped user with username of ${state().users[identifier].username}`);
-        return Apify.pushData({ [state().users[identifier].username]: [{ type: 'user' }, { ...state().users[identifier], tracks: collection }] });
+        return Apify.pushData({ [state().users[identifier].username]: { ...state().users[identifier], tracks: collection } });
     } catch (error) {
         throw new Error(`Failed to grab track data for user with ID ${identifier}: ${error}`);
     }
@@ -116,7 +115,7 @@ const handleTrackComments = async ({ json, request }, { state, dispatch }) => {
 
         if (state().users[identifier].tracks.length >= trackNumber) {
             log.info(`Scraped user with username of ${state().users[identifier].username}`);
-            return Apify.pushData({ [state().users[identifier].username]: [{ type: 'user' }, { ...state().users[identifier] }] });
+            return Apify.pushData({ [state().users[identifier].username]: { ...state().users[identifier] } });
         }
     } catch (error) {
         throw new Error(`Failed to grab track comments for track with ID ${trackId}: ${error}`);
@@ -152,9 +151,10 @@ const handleQuery = async ({ json, request, crawler: { requestQueue } }, { state
             }
 
             log.info(`Scraped query ${identifier}`);
-            return Apify.pushData({
-                [identifier]: [{ type: 'query', rawResults: results.length }, [...results]],
-            });
+            // return Apify.pushData({
+            //     [identifier]: [{ type: 'query', rawResults: results.length }, [...results]],
+            // });
+            return Apify.pushData([...results]);
         }
 
         log.debug(`Paginating query request ${identifier} to page ${number + 1}`);

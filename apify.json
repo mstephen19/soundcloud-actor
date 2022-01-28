@@ -1,7 +1,7 @@
 {
     "name": "soundcloud-scraper",
-    "version": "2.3",
-    "buildTag": "latest",
+    "version": "2.31",
+    "buildTag": "beta",
     "env": {
         "APIFY_MEMORY_MBYTES": "4096"
     },
