@@ -33,7 +33,7 @@ const handleUser = async ({ json, request, crawler: { requestQueue } }, { state,
         const user = Parser.createUserObject(json);
 
         // Add user to our context
-        await dispatch({
+        dispatch({
             type: 'ADD_USER',
             payload: { [identifier]: { ...user, tracks: [] } },
         });
@@ -68,7 +68,7 @@ const handleUserTracks = async ({ json, request, crawler: { requestQueue } }, { 
                 const trackNumber = collection.length;
 
                 // Add the track to our context
-                await dispatch({
+                dispatch({
                     type: 'ADD_TRACK',
                     payload: { [trackId]: { ...track } },
                 });
@@ -106,7 +106,7 @@ const handleTrackComments = async ({ json, request }, { state, dispatch }) => {
         track.comments = comments;
 
         // Delete finished track from context, add it to user's context
-        await dispatch({
+        dispatch({
             type: 'DELETE_TRACK',
             payload: trackId,
             identifier,
@@ -127,13 +127,13 @@ const handleQuery = async ({ json, request, crawler: { requestQueue } }, { state
     try {
         // If query doesn't exist in the context, instantiate it
         if (!state().queries?.[identifier]) {
-            await dispatch({
+            dispatch({
                 type: 'ADD_QUERY',
                 payload: { [identifier]: [...json.collection] },
             });
         } else {
             // Otherwise just add results to the query state
-            await dispatch({
+            dispatch({
                 type: 'ADD_TO_QUERY',
                 identifier,
                 payload: [...json.collection],

@@ -23,7 +23,7 @@ const createRequestList = async () => {
     // The max limit SoundCloud API allows for search results is 200
     const queryLimit = state().input.maxQueryResults > 200 ? 200 : state().input.maxQueryResults;
 
-    await dispatch({
+    dispatch({
         type: 'GENERAL',
         payload: { queryLimit },
     });
@@ -54,7 +54,7 @@ const createRequestList = async () => {
     }
 
     log.debug('Updating context with cheerioRequestList.');
-    await dispatch(
+    dispatch(
         {
             type: 'GENERAL',
             payload: { cheerioRequestList },
