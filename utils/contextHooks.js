@@ -23,7 +23,6 @@ const createKVContext = async (state, userReducer) => {
 
     // if (!check) {
     // Set context for run as well as store it in the KVStore
-    runContext = state;
 
     stringReducerFn = `${stringReducer()}`;
 
@@ -32,10 +31,13 @@ const createKVContext = async (state, userReducer) => {
     // If backup, use that instead of what was provided in the hook. If already context, set existing as new context. Else, set as initial from hook.
     if (backup) {
         await Apify.setValue('CONTEXT', backup);
+        runContext = backup;
     } else if (check) {
         await Apify.setValue('CONTEXT', check);
+        runContext = check;
     } else {
         await Apify.setValue('CONTEXT', { state });
+        runContext = state;
     }
 
     // Handle migrations and state persistence
