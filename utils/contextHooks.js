@@ -19,22 +19,41 @@ const createKVContext = async (state, userReducer) => {
     };
 
     const check = await Apify.getValue('CONTEXT');
+    const backup = await Apify.getValue('CONTEXT-BACKUP');
 
-    if (!check) {
-        // Set context for run as well as store it in the KVStore
-        runContext = state;
+    // if (!check) {
+    // Set context for run as well as store it in the KVStore
+    runContext = state;
 
-        stringReducerFn = `${stringReducer()}`;
+    stringReducerFn = `${stringReducer()}`;
 
-        await Apify.setValue('REDUCER', { stringReducer: `${stringReducer()}` });
+    await Apify.setValue('REDUCER', { stringReducer: `${stringReducer()}` });
+
+    // If backup, use that instead of what was provided in the hook. If already context, set existing as new context. Else, set as initial from hook.
+    if (backup) {
+        await Apify.setValue('CONTEXT', backup);
+    } else if (check) {
+        await Apify.setValue('CONTEXT', check);
+    } else {
         await Apify.setValue('CONTEXT', { state });
-
-        return setInterval(async () => {
-            log.info('Saving context to KVStore');
-            return Apify.setValue('CONTEXT', { state: runContext });
-        }, 15000);
     }
-    throw new Error('Context already exists!');
+
+    // Handle migrations and state persistence
+    Apify.events.on('migrating', () => {
+        Apify.setValue('CONTEXT-BACKUP', runContext);
+    });
+
+    Apify.events.on('persistState', () => {
+        Apify.setValue('CONTEXT-BACKUP', runContext);
+    });
+
+    // Update KVStore CONTEXT every 15 seconds
+    return setInterval(async () => {
+        log.debug('Saving context to KVStore');
+        return Apify.setValue('CONTEXT', { state: runContext });
+    }, 15000);
+    // }
+    // throw new Error('Context already exists!');
 };
 
 const useKVContext = async () => {
