@@ -57,11 +57,14 @@ When provided a list of usernames/queries/URLs, this actor will simultaneously s
 | usernames       | array   | []      | List of SoundCloud usernames to scrape.                                                                 |
 | keywords        | array   | []      | List of keywords to query and scrape results of.                                                        |
 | urls            | array   | []      | List of URLs (can scrape user pages, or query pages). **ONLY FOR QUERIES AND USERS**                    |
-| maxComments     | number  | 0       | The maximum comments you want a track's data to have (max: 350).                                        |
-| maxQueryResults | number  | 1       | The maximum number of results you want back from a keyword search (max: 1500).                          |
+| maxComments     | number  | 0       | The maximum comments you want a track's data to have (max: 150).                                        |
+| maxQueryResults | number  | 1       | The maximum number of results you want back from a keyword search (max: 2000).                          |
 | clientId        | string  | -       | SoundCloud API client ID. NOT REQUIRED. Leave empty to use default.                                     |
-| maxConcurrency  | number  | 100     | The maximum number of operations that can happen at one time. (max: 200)                                |
+| maxConcurrency  | number  | 75     | The maximum number of operations that can happen at one time. (max: 150)                                |
 | debug           | boolean | false   | Switch to true in order to receive frequent and descriptive debug logs about what the scraper is doing. |
+
+### Note:
+- Input URLs should be full valid SoundCloud URLs, such as `https://soundcloud.com/yt-audio-library`
 
 ### Example Input:
 

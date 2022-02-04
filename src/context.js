@@ -61,6 +61,10 @@ const reducer = (state, action) => {
             delete state.users[action.identifier];
             return state;
         }
+        case 'DELETE_QUERY': {
+            delete state.queries[action.identifier];
+            return state;
+        }
     }
 };
 

@@ -46,6 +46,7 @@ const createRequestList = async () => {
         } else {
             // Parse username and format USER_PAGE request
             const username = link.split('.com/')[1].split('/')[0];
+            log.warning(`Registered username ${username} from link. If this is incorrect, try a different link.`);
             requests.push({
                 url: `${BASE_URL}/${username}`,
                 userData: { label: 'USER_PAGE', username },

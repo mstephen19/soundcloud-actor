@@ -1,11 +1,14 @@
 const dJSON = require('dirty-json');
 const { EMBED_URL } = require('./constants');
+const { sleep } = require('apify').utils;
 
 class Parser {
     async getUserObject(page, username) {
         try {
             const html = await page.evaluate(() => document.querySelector('html').innerHTML);
-            const { data } = dJSON.parse(html.split('window.__sc_hydration =')[1].split('</script>')[0].replace(';', ''))[5];
+            const { data } = await page.evaluate(() => {
+                return !window.__sc_hydration[6].data.id ? window.__sc_hydration[5] : window.__sc_hydration[6];
+            });
             return data;
         } catch (error) {
             return { id: false };

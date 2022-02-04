@@ -10,16 +10,16 @@ const handleUserPage = async ({ page, request }, { state, dispatch }) => {
         await page.waitForSelector('#content', { timeout: 2500 });
 
         // Parse hydration object from page and grab the user's ID
-        const { id } = await Parser.getUserObject(page, username);
+        const obj = await Parser.getUserObject(page, username);
 
-        if (!id) return log.error(`User with ${username} not found. Improper username provided.`);
+        if (!obj.id) return log.error(`User with ${username} not found. Improper username provided.`);
 
-        log.info(`Grabbed user ID for ${username}: ${id}.`);
+        log.info(`Grabbed user ID for ${username}: ${obj.id}.`);
 
         // Add request to our context
         return dispatch({
             type: 'ADD_REQUEST',
-            payload: { url: `${API_URL}/users/${id}?client_id=${state().input.clientId}`, userData: { label: 'USER', identifier: id } },
+            payload: { url: `${API_URL}/users/${obj.id}?client_id=${state().input.clientId}`, userData: { label: 'USER', identifier: obj.id } },
         });
     } catch (error) {
         throw new Error(`Failed to parse user object on page for ${username}`);
@@ -37,7 +37,6 @@ const handleUser = async ({ json, request, crawler: { requestQueue } }, { state,
             type: 'ADD_USER',
             payload: { [identifier]: { ...user, tracks: [] } },
         });
-
         // Add request for user's tracks
         return requestQueue.addRequest({
             url: `${API_URL}/users/${identifier}/tracks?limit=9999&client_id=${state().input.clientId}`,
@@ -84,8 +83,13 @@ const handleUserTracks = async ({ json, request, crawler: { requestQueue } }, { 
             }
             return;
         }
+        await Apify.pushData({ [state().users[identifier].username]: { ...state().users[identifier], tracks: collection } });
         log.info(`Scraped user with username of ${state().users[identifier].username}`);
-        return Apify.pushData({ [state().users[identifier].username]: { ...state().users[identifier], tracks: collection } });
+
+        return dispatch({
+            type: 'DELETE_USER',
+            identifier,
+        });
     } catch (error) {
         throw new Error(`Failed to grab track data for user with ID ${identifier}: ${error}`);
     }
@@ -114,8 +118,12 @@ const handleTrackComments = async ({ json, request }, { state, dispatch }) => {
         });
 
         if (state().users[identifier].tracks.length >= trackNumber) {
+            await Apify.pushData({ [state().users[identifier].username]: { ...state().users[identifier] } });
             log.info(`Scraped user with username of ${state().users[identifier].username}`);
-            return Apify.pushData({ [state().users[identifier].username]: { ...state().users[identifier] } });
+            return dispatch({
+                type: 'DELETE_USER',
+                identifier,
+            });
         }
     } catch (error) {
         throw new Error(`Failed to grab track comments for track with ID ${trackId}: ${error}`);
@@ -150,11 +158,12 @@ const handleQuery = async ({ json, request, crawler: { requestQueue } }, { state
                 results = results.slice(0, desiredLength);
             }
 
+            await Apify.pushData([...results]);
             log.info(`Scraped query ${identifier}`);
-            // return Apify.pushData({
-            //     [identifier]: [{ type: 'query', rawResults: results.length }, [...results]],
-            // });
-            return Apify.pushData([...results]);
+            return dispatch({
+                type: 'DELETE_QUERY',
+                identifier,
+            });
         }
 
         log.debug(`Paginating query request ${identifier} to page ${number + 1}`);
